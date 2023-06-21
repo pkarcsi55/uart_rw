@@ -1,11 +1,11 @@
 bluetooth.onBluetoothConnected(function () {
     basic.showIcon(IconNames.Happy)
-    cmd = ""
+    cmd = "a"
     bluetooth.startUartService()
 })
 bluetooth.onBluetoothDisconnected(function () {
     basic.showIcon(IconNames.Sad)
-    cmd = ""
+    cmd = "a"
     basic.showLeds(`
         . . . . .
         . . . . .
@@ -14,9 +14,11 @@ bluetooth.onBluetoothDisconnected(function () {
         . . . . .
         `)
 })
+function zene () {
+    music.playTone(523, music.beat(BeatFraction.Sixteenth))
+}
 bluetooth.onUartDataReceived(serial.delimiters(Delimiters.Hash), function () {
     cmd = bluetooth.uartReadUntil(serial.delimiters(Delimiters.Hash))
-    basic.showString(cmd)
     bluetooth.uartWriteString(cmd)
 })
 let cmd = ""
@@ -24,7 +26,7 @@ basic.showIcon(IconNames.Asleep)
 music.setBuiltInSpeakerEnabled(true)
 basic.forever(function () {
     while (cmd == "v") {
-        soundExpression.slide.play()
+        zene()
         basic.showIcon(IconNames.Heart)
         basic.pause(500)
         basic.showLeds(`
@@ -35,13 +37,10 @@ basic.forever(function () {
             . . . . .
             `)
     }
-    while (cmd == "g" || cmd == "w") {
-        if (cmd == "g") {
-            music.playTone(523, music.beat(BeatFraction.Sixteenth))
-        } else {
-            basic.pause(500)
-        }
+    while (cmd == "g") {
+        zene()
         basic.showIcon(IconNames.Heart)
+        basic.pause(100)
         basic.showLeds(`
             . . . . .
             . . . . .
@@ -49,6 +48,11 @@ basic.forever(function () {
             . . . . .
             . . . . .
             `)
+    }
+    while (cmd == "w") {
+        basic.showIcon(IconNames.SmallHeart)
+        basic.pause(100)
+        basic.showIcon(IconNames.Heart)
     }
     basic.showLeds(`
         . . . . .
